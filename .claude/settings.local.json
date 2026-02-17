@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__nanobanana__generate_image",
+      "mcp__nanobanana__show_output_stats"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "nanobanana"
+  ]
+}
