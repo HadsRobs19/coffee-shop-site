@@ -1,0 +1,378 @@
+{
+  "posts": [
+    {
+      "id": "1",
+      "slug": "trip-to-colombia",
+      "title": "Meet Our Beans: A Trip to Colombia",
+      "author": "Maya Chen",
+      "date": "January 15, 2026",
+      "dateISO": "2026-01-15",
+      "category": "Coffee",
+      "thumbnail": "https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=800",
+      "heroImage": "https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=1920",
+      "excerpt": "Last fall, we visited the Huila region of Colombia to meet the farmers behind our house roast. Walking through the misty hillsides, we tasted cherries straight from the branch and learned why altitude and soil matter as much as roasting technique.",
+      "content": [
+        {
+          "type": "lead",
+          "text": "Last fall, we visited the Huila region of Colombia to meet the farmers behind our house roast. Walking through the misty hillsides, we tasted cherries straight from the branch and learned why altitude and soil matter as much as roasting technique."
+        },
+        {
+          "type": "paragraph",
+          "text": "The journey began in Bogotá, where we spent a restless night anticipating the drive south. By dawn, we were winding through the Andes, watching the landscape transform from urban sprawl to emerald valleys dotted with coffee farms. The air grew cooler and thinner as we climbed."
+        },
+        {
+          "type": "heading",
+          "text": "The Huila Region"
+        },
+        {
+          "type": "paragraph",
+          "text": "Huila is one of Colombia's most celebrated coffee-growing regions, and for good reason. Situated between 1,500 and 2,000 meters above sea level, the farms here benefit from rich volcanic soil, consistent rainfall, and dramatic temperature swings between day and night. These conditions stress the coffee plants in just the right way, concentrating sugars and developing complex flavors in the beans."
+        },
+        {
+          "type": "paragraph",
+          "text": "Our first stop was Finca La Esperanza, a family-run farm that's been growing coffee for four generations. Carlos, the current steward, walked us through rows of Caturra and Castillo varietals, explaining how his grandfather first cleared this land in the 1940s."
+        },
+        {
+          "type": "blockquote",
+          "text": "Coffee is not just a crop here. It's our history, our community, our future. Every bean tells a story.",
+          "cite": "Carlos Mendoza, Finca La Esperanza"
+        },
+        {
+          "type": "heading",
+          "text": "From Cherry to Cup"
+        },
+        {
+          "type": "paragraph",
+          "text": "We arrived during harvest season, and the hillsides were alive with pickers moving methodically through the rows. Each worker carried a basket, selecting only the ripest red cherries by hand. It's painstaking work—a skilled picker might harvest 100 pounds of cherries in a day, which yields just 20 pounds of exportable green coffee."
+        },
+        {
+          "type": "paragraph",
+          "text": "After picking, the cherries are processed using the washed method traditional to this region. The fruit is removed, and the beans are fermented in water for 24 to 48 hours. This step is critical—too little fermentation and the coffee tastes flat; too much and it develops off-flavors. Carlos checks the tanks multiple times a day, relying on smell and touch honed over decades."
+        },
+        {
+          "type": "paragraph",
+          "text": "The beans are then spread on raised beds to dry in the sun. Workers rake them regularly, ensuring even drying over the course of two weeks. Finally, the parchment layer is milled away, and the green beans are sorted by size and density before export."
+        },
+        {
+          "type": "heading",
+          "text": "What We Brought Back"
+        },
+        {
+          "type": "paragraph",
+          "text": "Beyond the coffee itself—which now forms the backbone of our house blend—we brought back a deeper appreciation for the craft. Every step of the process, from soil management to picking to processing, shapes the final cup. There are no shortcuts."
+        },
+        {
+          "type": "paragraph",
+          "text": "We also brought back relationships. We're now working directly with Carlos and two neighboring farms, paying above fair-trade prices and committing to multi-year contracts. It's a small thing, but it provides stability for families who've dedicated their lives to growing exceptional coffee."
+        },
+        {
+          "type": "paragraph",
+          "text": "Next time you order our house roast, know that it traveled a long way to reach your cup—and that every step of that journey was guided by people who care as much about coffee as we do."
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "slug": "improve-home-brew",
+      "title": "Five Ways to Improve Your Home Brew",
+      "author": "Jordan Rivera",
+      "date": "January 8, 2026",
+      "dateISO": "2026-01-08",
+      "category": "Tips",
+      "thumbnail": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800",
+      "heroImage": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=1920",
+      "excerpt": "You don't need expensive gear to make great coffee at home. Start with fresh beans, grind right before brewing, and pay attention to water temperature. Small changes make a big difference—here's what we've learned behind the bar.",
+      "content": [
+        {
+          "type": "lead",
+          "text": "You don't need expensive gear to make great coffee at home. Start with fresh beans, grind right before brewing, and pay attention to water temperature. Small changes make a big difference—here's what we've learned behind the bar."
+        },
+        {
+          "type": "paragraph",
+          "text": "After years of pulling shots and brewing pour-overs for customers, I've noticed something: the best cup of coffee isn't always made with the fanciest equipment. It's made with attention to detail. Here are five simple changes that will dramatically improve your morning ritual."
+        },
+        {
+          "type": "heading",
+          "text": "1. Buy Fresh, Buy Local"
+        },
+        {
+          "type": "paragraph",
+          "text": "Coffee is a perishable product. Those beans sitting in a grocery store aisle? They were probably roasted months ago and have been slowly going stale ever since. Ideally, you want beans that were roasted within the last two weeks."
+        },
+        {
+          "type": "paragraph",
+          "text": "Find a local roaster—like us!—and buy in small quantities. A 12-ounce bag should last you about two weeks if you're brewing daily. Yes, it costs a bit more than supermarket coffee, but the difference in taste is profound."
+        },
+        {
+          "type": "heading",
+          "text": "2. Grind Right Before Brewing"
+        },
+        {
+          "type": "paragraph",
+          "text": "This is the single biggest improvement most people can make. Pre-ground coffee starts losing its volatile aromatics within minutes of grinding. By the time you open that can of pre-ground, much of the flavor has already dissipated."
+        },
+        {
+          "type": "paragraph",
+          "text": "A decent burr grinder will set you back $50-100, but it's worth every penny. Even a hand grinder works well for single cups. Grind your beans immediately before brewing, and you'll taste notes you never knew were there."
+        },
+        {
+          "type": "blockquote",
+          "text": "The difference between pre-ground and fresh-ground is like the difference between dried herbs and fresh ones. Both work, but one transforms the dish."
+        },
+        {
+          "type": "heading",
+          "text": "3. Mind Your Water Temperature"
+        },
+        {
+          "type": "paragraph",
+          "text": "Water that's too hot will over-extract your coffee, pulling out bitter compounds. Water that's too cool will under-extract, leaving you with a sour, weak cup. The sweet spot is between 195°F and 205°F (90-96°C)."
+        },
+        {
+          "type": "paragraph",
+          "text": "If you don't have a thermometer, here's a simple trick: bring your water to a boil, then let it sit for 30-60 seconds before pouring. That brief rest brings it down to the ideal range."
+        },
+        {
+          "type": "heading",
+          "text": "4. Use the Right Ratio"
+        },
+        {
+          "type": "paragraph",
+          "text": "The golden ratio for drip coffee is roughly 1:16—one gram of coffee for every 16 grams of water. For a standard 12-ounce mug, that's about 22 grams of coffee (roughly 3 tablespoons)."
+        },
+        {
+          "type": "paragraph",
+          "text": "A kitchen scale helps here. Coffee beans vary in density, so volume measurements are inconsistent. Weighing your coffee and water ensures you hit the same ratio every time. Consistency is the foundation of a great cup."
+        },
+        {
+          "type": "heading",
+          "text": "5. Clean Your Equipment"
+        },
+        {
+          "type": "paragraph",
+          "text": "Coffee oils go rancid. If you haven't cleaned your grinder or brewer in months, those old oils are tainting every cup you make. Run a cleaning cycle through your machine weekly. Wipe down your grinder. Wash your French press thoroughly."
+        },
+        {
+          "type": "paragraph",
+          "text": "You'll be amazed at how much brighter and cleaner your coffee tastes when the equipment is properly maintained."
+        },
+        {
+          "type": "heading",
+          "text": "Start Small"
+        },
+        {
+          "type": "paragraph",
+          "text": "You don't need to implement all five changes at once. Start with fresh beans and proper grinding—those two alone will transform your morning cup. Once you've nailed those, experiment with water temperature and ratios."
+        },
+        {
+          "type": "paragraph",
+          "text": "Coffee should be a pleasure, not a chore. Find what works for your taste and your routine. And if you ever want to geek out about brewing techniques, stop by the shop. We love talking about this stuff."
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "slug": "art-of-japanese-matcha",
+      "title": "The Art of Japanese Matcha",
+      "author": "Maya Chen",
+      "date": "December 20, 2025",
+      "dateISO": "2025-12-20",
+      "category": "Matcha",
+      "thumbnail": "https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=800",
+      "heroImage": "https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=1920",
+      "excerpt": "Our matcha comes from Uji, a small town south of Kyoto that's been producing tea for over 800 years. We visited during harvest season and learned the traditional shading techniques that give ceremonial-grade matcha its distinctive umami flavor.",
+      "content": [
+        {
+          "type": "lead",
+          "text": "Our matcha comes from Uji, a small town south of Kyoto that's been producing tea for over 800 years. We visited during harvest season and learned the traditional shading techniques that give ceremonial-grade matcha its distinctive umami flavor."
+        },
+        {
+          "type": "paragraph",
+          "text": "I'd been serving matcha for years before I truly understood it. The powder arrived in tins, I whisked it with hot water, and customers seemed happy. But last spring, I had the chance to visit Uji, and everything changed."
+        },
+        {
+          "type": "heading",
+          "text": "A Town Built on Tea"
+        },
+        {
+          "type": "paragraph",
+          "text": "Uji sits along the river of the same name, about 30 minutes south of Kyoto by train. Tea has been cultivated here since the 12th century, when a monk named Eisai brought seeds back from China. The climate—mild winters, humid summers, and morning mists rising from the river—creates ideal growing conditions."
+        },
+        {
+          "type": "paragraph",
+          "text": "Walking through town, you notice tea everywhere. Gardens behind shops, small plots between buildings, and sprawling estates on the hillsides. The air carries a faint vegetal sweetness. It's a place where tea isn't just a product; it's an identity."
+        },
+        {
+          "type": "heading",
+          "text": "The Shading Process"
+        },
+        {
+          "type": "paragraph",
+          "text": "What distinguishes matcha from regular green tea is the shading. About three weeks before harvest, the tea plants are covered with screens that block 90% of the sunlight. This stress response triggers a cascade of chemical changes in the leaves."
+        },
+        {
+          "type": "paragraph",
+          "text": "Without sunlight, the plants produce more chlorophyll—hence matcha's vivid green color. They also generate higher levels of L-theanine, an amino acid responsible for that distinctive umami flavor and the calm alertness that matcha provides. The shading is what transforms ordinary tea into something extraordinary."
+        },
+        {
+          "type": "blockquote",
+          "text": "We are not making tea. We are coaxing the plant to reveal its deepest nature. The shade is our invitation.",
+          "cite": "Tanaka-san, fourth-generation tea farmer"
+        },
+        {
+          "type": "heading",
+          "text": "Harvest and Processing"
+        },
+        {
+          "type": "paragraph",
+          "text": "The spring harvest, called ichibancha, produces the finest matcha. Workers pick only the youngest, most tender leaves—often just the top two leaves and bud of each shoot. These are steamed immediately to halt oxidation, then dried."
+        },
+        {
+          "type": "paragraph",
+          "text": "At this stage, the tea is called tencha. It's stored in cold conditions until needed, then stone-ground into the fine powder we know as matcha. The grinding is slow—a single stone mill produces only about 40 grams per hour. Rush the process, and friction heats the powder, degrading its flavor."
+        },
+        {
+          "type": "heading",
+          "text": "Grades of Matcha"
+        },
+        {
+          "type": "paragraph",
+          "text": "Not all matcha is created equal. Ceremonial grade, made from the youngest leaves of the first harvest, has a sweet, complex flavor suitable for drinking straight. It's what we use for our traditional matcha preparations."
+        },
+        {
+          "type": "paragraph",
+          "text": "Culinary grade comes from later harvests and older leaves. It's more astringent, which actually makes it better for lattes and baking—the stronger flavor cuts through milk and sugar. We use a high-quality culinary grade for our matcha lattes."
+        },
+        {
+          "type": "heading",
+          "text": "What I Brought Home"
+        },
+        {
+          "type": "paragraph",
+          "text": "Beyond the matcha itself—which we now source directly from a family farm in Uji—I brought back a deeper respect for the craft. Every tin represents centuries of accumulated knowledge, seasons of careful tending, and hours of patient grinding."
+        },
+        {
+          "type": "paragraph",
+          "text": "When you order a matcha at Alchemy Brew, you're not just getting a green drink. You're participating in a tradition that stretches back to medieval Japan. We take that seriously, and we think you can taste the difference."
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "slug": "matcha-at-home",
+      "title": "Matcha at Home: Getting It Right",
+      "author": "Jordan Rivera",
+      "date": "December 12, 2025",
+      "dateISO": "2025-12-12",
+      "category": "Matcha",
+      "thumbnail": "https://images.unsplash.com/photo-1515823064-d6e0c04616a7?w=800",
+      "heroImage": "https://images.unsplash.com/photo-1515823064-d6e0c04616a7?w=1920",
+      "excerpt": "Clumpy matcha? Bitter taste? We've been there. The secret is in the sift, the water temperature, and the whisking motion. Here's our step-by-step guide to making matcha that rivals what you'd get at a Kyoto tea house.",
+      "content": [
+        {
+          "type": "lead",
+          "text": "Clumpy matcha? Bitter taste? We've been there. The secret is in the sift, the water temperature, and the whisking motion. Here's our step-by-step guide to making matcha that rivals what you'd get at a Kyoto tea house."
+        },
+        {
+          "type": "paragraph",
+          "text": "Making matcha at home seems simple enough—powder plus water, right? But if you've tried it, you know the reality: clumps floating on top, a bitter aftertaste, or a thin, watery consistency. Don't worry. With a few adjustments, you can make coffeehouse-quality matcha in your kitchen."
+        },
+        {
+          "type": "heading",
+          "text": "The Essential Tools"
+        },
+        {
+          "type": "paragraph",
+          "text": "You don't need much, but what you do need matters. A bamboo whisk (chasen) is almost non-negotiable. Its fine tines break up clumps and aerate the matcha in ways a regular whisk or fork simply can't replicate. You can find one online for $15-25."
+        },
+        {
+          "type": "paragraph",
+          "text": "A small sifter or fine-mesh strainer is equally important. Matcha powder clumps easily, and sifting before whisking prevents those stubborn lumps from forming. A ceramic bowl with a wide, flat bottom gives you room to whisk properly—though any bowl with enough space will work."
+        },
+        {
+          "type": "heading",
+          "text": "Step 1: Sift Your Matcha"
+        },
+        {
+          "type": "paragraph",
+          "text": "Measure 1-2 grams of matcha (about half to one teaspoon) into your sifter, and push it through into your bowl. Yes, this step feels tedious. Yes, it's worth it. Those tiny clumps that seem harmless? They won't dissolve no matter how hard you whisk later."
+        },
+        {
+          "type": "blockquote",
+          "text": "If you skip the sift, you've already lost. Every clump that remains is flavor you'll never taste."
+        },
+        {
+          "type": "heading",
+          "text": "Step 2: Temperature Matters"
+        },
+        {
+          "type": "paragraph",
+          "text": "Here's where most home matcha goes wrong: the water is too hot. Boiling water scorches the delicate compounds in matcha, releasing bitter catechins and destroying the sweet, umami notes you're after."
+        },
+        {
+          "type": "paragraph",
+          "text": "The ideal temperature is 175°F (80°C). If you don't have a thermometer, let your kettle sit for 3-4 minutes after boiling. The water should be hot enough to steam but not aggressively bubbling. Pour about 2 ounces (60ml) over your sifted matcha."
+        },
+        {
+          "type": "heading",
+          "text": "Step 3: The Whisking Technique"
+        },
+        {
+          "type": "paragraph",
+          "text": "This is the fun part. Hold the bowl steady with one hand and the whisk with the other. Don't stir in circles—that won't aerate the matcha properly. Instead, whisk rapidly back and forth in a \"W\" or \"M\" motion, keeping your wrist loose."
+        },
+        {
+          "type": "paragraph",
+          "text": "Start at the bottom of the bowl to dissolve the powder, then gradually move to the surface to build foam. You're aiming for a layer of fine, uniform bubbles on top. The whole process takes about 15-20 seconds of vigorous whisking."
+        },
+        {
+          "type": "heading",
+          "text": "Step 4: Check the Foam"
+        },
+        {
+          "type": "paragraph",
+          "text": "Good matcha should have a smooth, frothy top with bubbles so fine they're almost invisible. If you see large bubbles, pop them by gently tapping the whisk on the surface. The liquid beneath should be a vibrant, consistent green with no clumps or sediment."
+        },
+        {
+          "type": "heading",
+          "text": "Troubleshooting Common Problems"
+        },
+        {
+          "type": "paragraph",
+          "text": "<strong>Too bitter:</strong> Your water was probably too hot. Try letting it cool more before pouring. Also check your matcha's quality—old or low-grade powder tends toward bitterness."
+        },
+        {
+          "type": "paragraph",
+          "text": "<strong>Not frothy enough:</strong> Whisk faster and more vigorously. Make sure you're using the \"W\" motion rather than stirring. If your whisk has damaged or bent tines, it may be time for a new one."
+        },
+        {
+          "type": "paragraph",
+          "text": "<strong>Grainy texture:</strong> You didn't sift, or you didn't whisk long enough. The powder needs to be fully suspended in the water, not just mixed in."
+        },
+        {
+          "type": "heading",
+          "text": "Making a Matcha Latte"
+        },
+        {
+          "type": "paragraph",
+          "text": "For lattes, prepare your matcha slightly stronger—use the same amount of powder but only 1 ounce of water. Whisk until smooth, then add 6-8 ounces of steamed milk (dairy or plant-based). The concentrated matcha base ensures the flavor doesn't get lost."
+        },
+        {
+          "type": "paragraph",
+          "text": "Pro tip: Add a touch of honey or maple syrup to your milk before steaming. The subtle sweetness balances the matcha beautifully without overpowering it."
+        },
+        {
+          "type": "heading",
+          "text": "Practice Makes Perfect"
+        },
+        {
+          "type": "paragraph",
+          "text": "Your first few attempts might not be flawless, and that's fine. Matcha preparation is a skill that develops over time. Pay attention to what works and what doesn't, adjust accordingly, and before long, you'll be making better matcha than most coffee shops."
+        },
+        {
+          "type": "paragraph",
+          "text": "And if you ever want to see the technique in action, stop by Alchemy Brew. We're always happy to demonstrate—and to let you taste the difference proper preparation makes."
+        }
+      ]
+    }
+  ]
+}
