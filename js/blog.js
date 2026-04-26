@@ -3,6 +3,174 @@
  */
 
 /**
+ * Content Filter - Checks for banned words before allowing post submission
+ * This is a simple regex-based filter for common inappropriate words.
+ * Add words to the bannedPatterns array as needed.
+ */
+const ContentFilter = {
+    // Add banned words/patterns here (case-insensitive)
+    // Using word boundaries to avoid false positives
+    bannedPatterns: [
+        // Slurs and hate speech - add patterns as needed
+        /\b(slur1|slur2)\b/i,
+        // Common profanity patterns - customize as needed
+        /\bf+u+c+k+\w*/i,
+        /\bs+h+i+t+\w*/i,
+        /\ba+s+s+h+o+l+e+\w*/i,
+        /\bb+i+t+c+h+\w*/i,
+        /\bd+a+m+n+\w*/i,
+        /\bc+r+a+p+\b/i,
+        // Add more patterns as needed for your use case
+    ],
+
+    /**
+     * Check if content contains banned words
+     * @param {string} text - The text to check
+     * @returns {{ isClean: boolean, reason: string | null }}
+     */
+    check(text) {
+        if (!text || typeof text !== 'string') {
+            return { isClean: true, reason: null };
+        }
+
+        for (const pattern of this.bannedPatterns) {
+            if (pattern.test(text)) {
+                return {
+                    isClean: false,
+                    reason: 'Your post contains inappropriate language. Please revise and try again.'
+                };
+            }
+        }
+
+        return { isClean: true, reason: null };
+    },
+
+    /**
+     * Check multiple fields at once
+     * @param {Object} fields - Object with field names as keys and text as values
+     * @returns {{ isClean: boolean, reason: string | null, field: string | null }}
+     */
+    checkFields(fields) {
+        for (const [fieldName, text] of Object.entries(fields)) {
+            const result = this.check(text);
+            if (!result.isClean) {
+                return {
+                    isClean: false,
+                    reason: result.reason,
+                    field: fieldName
+                };
+            }
+        }
+        return { isClean: true, reason: null, field: null };
+    }
+};
+
+/**
+ * User Post Storage - persists user-submitted posts in localStorage
+ */
+const UserPostStore = {
+    storageKey: 'blog_user_posts',
+
+    /**
+     * Get all user posts
+     */
+    getAll() {
+        try {
+            const data = localStorage.getItem(this.storageKey);
+            return data ? JSON.parse(data) : [];
+        } catch {
+            return [];
+        }
+    },
+
+    /**
+     * Add a new user post
+     */
+    add(post) {
+        try {
+            const posts = this.getAll();
+            posts.unshift(post); // Add to beginning (newest first)
+            localStorage.setItem(this.storageKey, JSON.stringify(posts));
+            return true;
+        } catch (e) {
+            console.warn('Failed to save user post:', e);
+            return false;
+        }
+    },
+
+    /**
+     * Get a post by ID
+     */
+    get(postId) {
+        const posts = this.getAll();
+        return posts.find(p => p.id === postId) || null;
+    },
+
+    /**
+     * Delete a post by ID
+     */
+    delete(postId) {
+        try {
+            const posts = this.getAll();
+            const filtered = posts.filter(p => p.id !== postId);
+            localStorage.setItem(this.storageKey, JSON.stringify(filtered));
+            return true;
+        } catch {
+            return false;
+        }
+    }
+};
+
+/**
+ * Report Storage - stores reported posts for admin review
+ */
+const ReportStore = {
+    storageKey: 'blog_reports',
+
+    /**
+     * Get all reports
+     */
+    getAll() {
+        try {
+            const data = localStorage.getItem(this.storageKey);
+            return data ? JSON.parse(data) : [];
+        } catch {
+            return [];
+        }
+    },
+
+    /**
+     * Add a report
+     */
+    add(postId, reason) {
+        try {
+            const reports = this.getAll();
+            // Check if already reported
+            if (reports.some(r => r.postId === postId)) {
+                return { success: false, message: 'This post has already been reported.' };
+            }
+            reports.push({
+                id: 'r' + Date.now(),
+                postId: postId,
+                reason: reason,
+                timestamp: new Date().toISOString()
+            });
+            localStorage.setItem(this.storageKey, JSON.stringify(reports));
+            return { success: true, message: 'Report submitted. Thank you for helping keep our community safe.' };
+        } catch (e) {
+            return { success: false, message: 'Failed to submit report. Please try again.' };
+        }
+    },
+
+    /**
+     * Check if a post is reported
+     */
+    isReported(postId) {
+        return this.getAll().some(r => r.postId === postId);
+    }
+};
+
+/**
  * Like storage - persists likes in localStorage
  */
 const LikeStore = {
@@ -192,21 +360,201 @@ const CommentStore = {
 
 /**
  * Render blog post cards on the list page
+ * Combines official posts with user-submitted posts
  */
 function renderBlogList(posts, container) {
-    container.innerHTML = posts.map(post => `
-        <article class="blog-card fade-in visible">
-            <a href="blog/post.html?id=${encodeURIComponent(post.id)}" class="blog-card-link">
-                <div class="blog-image" style="background-image: url('${escapeAttr(post.thumbnail)}');"></div>
+    // Get user posts and combine with official posts
+    const userPosts = UserPostStore.getAll();
+    const allPosts = [...userPosts, ...posts]; // User posts appear first
+
+    container.innerHTML = allPosts.map(post => {
+        const isUserPost = post.isUserPost === true;
+        const isReported = isUserPost && ReportStore.isReported(post.id);
+
+        return `
+        <article class="blog-card fade-in visible ${isUserPost ? 'user-post' : ''} ${isReported ? 'reported' : ''}" data-post-id="${escapeAttr(post.id)}">
+            ${isUserPost ? `
+                <div class="user-post-badge">
+                    <span>Community Post</span>
+                    ${!isReported ? `<button class="report-btn" data-post-id="${escapeAttr(post.id)}" aria-label="Report this post" title="Report inappropriate content">Report</button>` : '<span class="reported-badge">Reported</span>'}
+                </div>
+            ` : ''}
+            <a href="${isUserPost ? '#' : 'blog/post.html?id=' + encodeURIComponent(post.id)}" class="blog-card-link" ${isUserPost ? 'onclick="return false;"' : ''}>
+                <div class="blog-image" style="background-image: url('${escapeAttr(post.thumbnail || 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600')}');"></div>
                 <div class="blog-content">
                     <span class="blog-meta">${escapeHtml(post.date)} &bull; ${escapeHtml(post.author)}</span>
                     <h3>${escapeHtml(post.title)}</h3>
-                    <p>${escapeHtml(post.excerpt)}</p>
-                    <span class="read-more">Read More</span>
+                    <p>${escapeHtml(post.excerpt || (post.content ? post.content.substring(0, 150) + '...' : ''))}</p>
+                    ${!isUserPost ? '<span class="read-more">Read More</span>' : ''}
                 </div>
             </a>
+            ${isUserPost ? `
+                <div class="user-post-content">
+                    <p>${escapeHtml(post.content)}</p>
+                </div>
+            ` : ''}
         </article>
-    `).join('');
+    `}).join('');
+
+    // Attach report button handlers
+    container.querySelectorAll('.report-btn').forEach(btn => {
+        btn.addEventListener('click', handleReportClick);
+    });
+}
+
+/**
+ * Handle report button click
+ */
+function handleReportClick(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const postId = event.target.dataset.postId;
+    const reason = prompt('Please describe why you are reporting this post:');
+
+    if (reason && reason.trim()) {
+        const result = ReportStore.add(postId, reason.trim());
+        showToast(result.message, result.success ? 'success' : 'error');
+
+        if (result.success) {
+            // Update the card UI
+            const card = document.querySelector(`.blog-card[data-post-id="${postId}"]`);
+            if (card) {
+                card.classList.add('reported');
+                const badge = card.querySelector('.user-post-badge');
+                if (badge) {
+                    const reportBtn = badge.querySelector('.report-btn');
+                    if (reportBtn) {
+                        reportBtn.replaceWith(Object.assign(document.createElement('span'), {
+                            className: 'reported-badge',
+                            textContent: 'Reported'
+                        }));
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Handle new post form submission
+ */
+async function handlePostSubmit(event) {
+    event.preventDefault();
+
+    const form = event.target;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const statusEl = form.querySelector('.post-form-status');
+
+    // Get form values
+    const title = form.querySelector('#post-title').value.trim();
+    const author = form.querySelector('#post-author').value.trim();
+    const content = form.querySelector('#post-content').value.trim();
+
+    // Clear previous errors
+    form.querySelectorAll('.field-error').forEach(el => el.textContent = '');
+    form.querySelectorAll('input, textarea').forEach(el => el.classList.remove('error'));
+    statusEl.textContent = '';
+    statusEl.className = 'post-form-status';
+
+    // Basic validation
+    let hasErrors = false;
+
+    if (!title || title.length < 5) {
+        form.querySelector('#post-title').classList.add('error');
+        form.querySelector('#title-error').textContent = 'Title must be at least 5 characters';
+        hasErrors = true;
+    }
+
+    if (!author || author.length < 2) {
+        form.querySelector('#post-author').classList.add('error');
+        form.querySelector('#author-error').textContent = 'Name must be at least 2 characters';
+        hasErrors = true;
+    }
+
+    if (!content || content.length < 20) {
+        form.querySelector('#post-content').classList.add('error');
+        form.querySelector('#content-error').textContent = 'Content must be at least 20 characters';
+        hasErrors = true;
+    }
+
+    if (hasErrors) return;
+
+    // Check for banned content
+    const filterResult = ContentFilter.checkFields({ title, author, content });
+    if (!filterResult.isClean) {
+        statusEl.textContent = filterResult.reason;
+        statusEl.className = 'post-form-status error';
+        if (filterResult.field) {
+            form.querySelector(`#post-${filterResult.field}`)?.classList.add('error');
+        }
+        return;
+    }
+
+    // Disable form while submitting
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Posting...';
+    statusEl.textContent = 'Submitting your post...';
+
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    // Create post object
+    const post = {
+        id: 'user-' + Date.now(),
+        title: title,
+        author: author,
+        content: content,
+        date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+        dateISO: new Date().toISOString(),
+        isUserPost: true,
+        thumbnail: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600'
+    };
+
+    // Save to storage
+    const saved = UserPostStore.add(post);
+
+    if (saved) {
+        // Clear form
+        form.reset();
+
+        // Show success
+        statusEl.textContent = 'Your post has been published!';
+        statusEl.className = 'post-form-status success';
+
+        // Refresh the blog list
+        await refreshBlogList();
+
+        // Scroll to see the new post
+        const newCard = document.querySelector(`.blog-card[data-post-id="${post.id}"]`);
+        if (newCard) {
+            newCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            newCard.classList.add('new-post-highlight');
+        }
+
+        showToast('Your post has been published!', 'success');
+    } else {
+        statusEl.textContent = 'Failed to save post. Please try again.';
+        statusEl.className = 'post-form-status error';
+    }
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Publish Post';
+}
+
+/**
+ * Refresh the blog list (reload posts)
+ */
+async function refreshBlogList() {
+    const container = document.getElementById('blog-grid');
+    if (!container) return;
+
+    try {
+        const posts = await BlogAPI.getPosts();
+        renderBlogList(posts, container);
+    } catch (error) {
+        console.error('Error refreshing posts:', error);
+    }
 }
 
 /**
@@ -936,6 +1284,25 @@ async function initBlogList() {
     };
 
     await loadPosts();
+
+    // Initialize the create post form
+    const postForm = document.getElementById('create-post-form');
+    if (postForm) {
+        postForm.addEventListener('submit', handlePostSubmit);
+    }
+
+    // Initialize the form toggle
+    const toggleBtn = document.getElementById('toggle-post-form');
+    const formContainer = document.getElementById('create-post-section');
+    if (toggleBtn && formContainer) {
+        toggleBtn.addEventListener('click', () => {
+            formContainer.classList.toggle('expanded');
+            toggleBtn.textContent = formContainer.classList.contains('expanded')
+                ? 'Cancel'
+                : 'Write a Post';
+            toggleBtn.classList.toggle('active');
+        });
+    }
 }
 
 /**
