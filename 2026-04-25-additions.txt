@@ -1,0 +1,1209 @@
+
+╭─── Claude Code v2.1.12 ──────────────────────────────────────────────────────╮
+│                                                    │ Tips for getting        │
+│                 Welcome back Hads!                 │ started                 │
+│                                                    │ Run /init to create a … │
+│                      ▗ ▗   ▖ ▖                     │ ─────────────────────── │
+│                                                    │ Recent activity         │
+│                        ▘▘ ▝▝                       │ No recent activity      │
+│                                                    │                         │
+│     Opus 4.5 · Claude Pro ·                        │                         │
+│     hadassahplaysflute@gmail.com's Organization    │                         │
+│         ~/Documents/GitHub/coffee-shop-site        │                         │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+❯ I want there to be a way a user can add a new blog post to the website.   
+  I'm trying to think of how to go about that due to the need for some sort 
+  of filtering of certain curse words and/or slurs someone with bad         
+  intentions could write. my though process would be to make a manual regex 
+  section for banned words that needs to be met before a user can post a    
+  blog. another idea would be to implement a report button that can be      
+  viewed by admins or the creators of the site. help me make this possible  
+  on a smaller, simplier scale for this website                             
+
+⏺ I'll help you implement a user blog posting feature with content moderation. Let me first explore the current codebase to understand the blog structure and how things are set up.
+
+⏺ Explore(Explore blog system architecture)
+  ⎿  Done (14 tool uses · 46.4k tokens · 36s)                            
+
+
+⏺ Now I understand the codebase. It's a static site with blog posts in /data/posts.json and uses localStorage for user-generated content (comments, likes). Let me propose a practical approach for your use case.
+
+  Given this is a static site without a backend, here's what I recommend for a simple, small-scale implementation:
+
+  Proposed Approach
+
+  1. User Post Creation Form
+  - Add a "Create Post" page/modal with title, content, author fields
+  - Store user-submitted posts in localStorage (like comments work now)
+  - Display both JSON posts and user posts together
+
+  2. Banned Word Filter (Regex-based)
+  - Create a configurable list of banned words/patterns
+  - Check content before submission
+  - Show clear error message if content is flagged
+  - This is immediate and prevents posting bad content
+
+  3. Simple Report System
+  - Add a "Report" button on user-submitted posts
+  - Store reports in localStorage
+  - Create a simple admin view (just a hidden page) to see reported posts
+
+  This keeps things simple - no backend needed, works with your current architecture.
+
+  Would you like me to implement this? I have a couple of clarifying questions:
+                                                                         
+⏺ User answered Claude's questions:
+  ⎿  · Where should users create new blog posts from? → Section on 
+     blog.html
+     · How should the banned word filter work? → Block submission 
+     (Recommended)
+
+⏺ I'll implement a form section on blog.html with a banned word filter that blocks submission. Let me read the current files and build this out.
+
+⏺ Read(blog.html)
+  ⎿  Read 80 lines
+
+⏺ Read(js/blog.js)
+  ⎿  Read 990 lines
+
+⏺ Read(css/styles.css)
+  ⎿  Read 2231 lines
+
+⏺ Now I have a clear picture of the codebase. Let me implement this feature step by step.
+
+⏺ Update(js/blog.js)
+  ⎿  Added 168 lines                                                     
+        3   */
+        4  
+        5  /**
+        6 + * Content Filter - Checks for banned words before allowing po
+          +st submission                                                 
+        7 + * This is a simple regex-based filter for common inappropriat
+          +e words.                                                      
+        8 + * Add words to the bannedPatterns array as needed.           
+        9 + */                                                           
+       10 +const ContentFilter = {                                       
+       11 +    // Add banned words/patterns here (case-insensitive)      
+       12 +    // Using word boundaries to avoid false positives         
+       13 +    bannedPatterns: [                                         
+       14 +        // Slurs and hate speech - add patterns as needed     
+       15 +        /\b(slur1|slur2)\b/i,                                 
+       16 +        // Common profanity patterns - customize as needed    
+       17 +        /\bf+u+c+k+\w*/i,                                     
+       18 +        /\bs+h+i+t+\w*/i,                                     
+       19 +        /\ba+s+s+h+o+l+e+\w*/i,                               
+       20 +        /\bb+i+t+c+h+\w*/i,                                   
+       21 +        /\bd+a+m+n+\w*/i,                                     
+       22 +        /\bc+r+a+p+\b/i,                                      
+       23 +        // Add more patterns as needed for your use case      
+       24 +    ],                                                        
+       25 +                                                              
+       26 +    /**                                                       
+       27 +     * Check if content contains banned words                 
+       28 +     * @param {string} text - The text to check               
+       29 +     * @returns {{ isClean: boolean, reason: string | null }} 
+       30 +     */                                                       
+       31 +    check(text) {                                             
+       32 +        if (!text || typeof text !== 'string') {              
+       33 +            return { isClean: true, reason: null };           
+       34 +        }                                                     
+       35 +                                                              
+       36 +        for (const pattern of this.bannedPatterns) {          
+       37 +            if (pattern.test(text)) {                         
+       38 +                return {                                      
+       39 +                    isClean: false,                           
+       40 +                    reason: 'Your post contains inappropriate 
+          +language. Please revise and try again.'                       
+       41 +                };                                            
+       42 +            }                                                 
+       43 +        }                                                     
+       44 +                                                              
+       45 +        return { isClean: true, reason: null };               
+       46 +    },                                                        
+       47 +                                                              
+       48 +    /**                                                       
+       49 +     * Check multiple fields at once                          
+       50 +     * @param {Object} fields - Object with field names as key
+          +s and text as values                                          
+       51 +     * @returns {{ isClean: boolean, reason: string | null, fi
+          +eld: string | null }}                                         
+       52 +     */                                                       
+       53 +    checkFields(fields) {                                     
+       54 +        for (const [fieldName, text] of Object.entries(fields)
+          +) {                                                           
+       55 +            const result = this.check(text);                  
+       56 +            if (!result.isClean) {                            
+       57 +                return {                                      
+       58 +                    isClean: false,                           
+       59 +                    reason: result.reason,                    
+       60 +                    field: fieldName                          
+       61 +                };                                            
+       62 +            }                                                 
+       63 +        }                                                     
+       64 +        return { isClean: true, reason: null, field: null };  
+       65 +    }                                                         
+       66 +};                                                            
+       67 +                                                              
+       68 +/**                                                           
+       69 + * User Post Storage - persists user-submitted posts in localS
+          +torage                                                        
+       70 + */                                                           
+       71 +const UserPostStore = {                                       
+       72 +    storageKey: 'blog_user_posts',                            
+       73 +                                                              
+       74 +    /**                                                       
+       75 +     * Get all user posts                                     
+       76 +     */                                                       
+       77 +    getAll() {                                                
+       78 +        try {                                                 
+       79 +            const data = localStorage.getItem(this.storageKey)
+          +;                                                             
+       80 +            return data ? JSON.parse(data) : [];              
+       81 +        } catch {                                             
+       82 +            return [];                                        
+       83 +        }                                                     
+       84 +    },                                                        
+       85 +                                                              
+       86 +    /**                                                       
+       87 +     * Add a new user post                                    
+       88 +     */                                                       
+       89 +    add(post) {                                               
+       90 +        try {                                                 
+       91 +            const posts = this.getAll();                      
+       92 +            posts.unshift(post); // Add to beginning (newest f
+          +irst)                                                         
+       93 +            localStorage.setItem(this.storageKey, JSON.stringi
+          +fy(posts));                                                   
+       94 +            return true;                                      
+       95 +        } catch (e) {                                         
+       96 +            console.warn('Failed to save user post:', e);     
+       97 +            return false;                                     
+       98 +        }                                                     
+       99 +    },                                                        
+      100 +                                                              
+      101 +    /**                                                       
+      102 +     * Get a post by ID                                       
+      103 +     */                                                       
+      104 +    get(postId) {                                             
+      105 +        const posts = this.getAll();                          
+      106 +        return posts.find(p => p.id === postId) || null;      
+      107 +    },                                                        
+      108 +                                                              
+      109 +    /**                                                       
+      110 +     * Delete a post by ID                                    
+      111 +     */                                                       
+      112 +    delete(postId) {                                          
+      113 +        try {                                                 
+      114 +            const posts = this.getAll();                      
+      115 +            const filtered = posts.filter(p => p.id !== postId
+          +);                                                            
+      116 +            localStorage.setItem(this.storageKey, JSON.stringi
+          +fy(filtered));                                                
+      117 +            return true;                                      
+      118 +        } catch {                                             
+      119 +            return false;                                     
+      120 +        }                                                     
+      121 +    }                                                         
+      122 +};                                                            
+      123 +                                                              
+      124 +/**                                                           
+      125 + * Report Storage - stores reported posts for admin review    
+      126 + */                                                           
+      127 +const ReportStore = {                                         
+      128 +    storageKey: 'blog_reports',                               
+      129 +                                                              
+      130 +    /**                                                       
+      131 +     * Get all reports                                        
+      132 +     */                                                       
+      133 +    getAll() {                                                
+      134 +        try {                                                 
+      135 +            const data = localStorage.getItem(this.storageKey)
+          +;                                                             
+      136 +            return data ? JSON.parse(data) : [];              
+      137 +        } catch {                                             
+      138 +            return [];                                        
+      139 +        }                                                     
+      140 +    },                                                        
+      141 +                                                              
+      142 +    /**                                                       
+      143 +     * Add a report                                           
+      144 +     */                                                       
+      145 +    add(postId, reason) {                                     
+      146 +        try {                                                 
+      147 +            const reports = this.getAll();                    
+      148 +            // Check if already reported                      
+      149 +            if (reports.some(r => r.postId === postId)) {     
+      150 +                return { success: false, message: 'This post h
+          +as already been reported.' };                                 
+      151 +            }                                                 
+      152 +            reports.push({                                    
+      153 +                id: 'r' + Date.now(),                         
+      154 +                postId: postId,                               
+      155 +                reason: reason,                               
+      156 +                timestamp: new Date().toISOString()           
+      157 +            });                                               
+      158 +            localStorage.setItem(this.storageKey, JSON.stringi
+          +fy(reports));                                                 
+      159 +            return { success: true, message: 'Report submitted
+          +. Thank you for helping keep our community safe.' };          
+      160 +        } catch (e) {                                         
+      161 +            return { success: false, message: 'Failed to submi
+          +t report. Please try again.' };                               
+      162 +        }                                                     
+      163 +    },                                                        
+      164 +                                                              
+      165 +    /**                                                       
+      166 +     * Check if a post is reported                            
+      167 +     */                                                       
+      168 +    isReported(postId) {                                      
+      169 +        return this.getAll().some(r => r.postId === postId);  
+      170 +    }                                                         
+      171 +};                                                            
+      172 +                                                              
+      173 +/**                                                           
+      174   * Like storage - persists likes in localStorage
+      175   */
+      176  const LikeStore = {
+
+⏺ Now let me add the post submission form handling and modify the blog list rendering to include user posts.
+
+⏺ Update(js/blog.js)
+  ⎿  Added 187 lines, removed 7 lines                                    
+      360  
+      361  /**
+      362   * Render blog post cards on the list page
+      363 + * Combines official posts with user-submitted posts          
+      364   */
+      365  function renderBlogList(posts, container) {
+      365 -    container.innerHTML = posts.map(post => `                 
+      366 -        <article class="blog-card fade-in visible">           
+      367 -            <a href="blog/post.html?id=${encodeURIComponent(po
+          -st.id)}" class="blog-card-link">                              
+      368 -                <div class="blog-image" style="background-imag
+          -e: url('${escapeAttr(post.thumbnail)}');"></div>              
+      366 +    // Get user posts and combine with official posts         
+      367 +    const userPosts = UserPostStore.getAll();                 
+      368 +    const allPosts = [...userPosts, ...posts]; // User posts a
+          +ppear first                                                   
+      369 +                                                              
+      370 +    container.innerHTML = allPosts.map(post => {              
+      371 +        const isUserPost = post.isUserPost === true;          
+      372 +        const isReported = isUserPost && ReportStore.isReporte
+          +d(post.id);                                                   
+      373 +                                                              
+      374 +        return `                                              
+      375 +        <article class="blog-card fade-in visible ${isUserPost
+          + ? 'user-post' : ''} ${isReported ? 'reported' : ''}" data-pos
+          +t-id="${escapeAttr(post.id)}">                                
+      376 +            ${isUserPost ? `                                  
+      377 +                <div class="user-post-badge">                 
+      378 +                    <span>Community Post</span>               
+      379 +                    ${!isReported ? `<button class="report-btn
+          +" data-post-id="${escapeAttr(post.id)}" aria-label="Report thi
+          +s post" title="Report inappropriate content">Report</button>` 
+          +: '<span class="reported-badge">Reported</span>'}             
+      380 +                </div>                                        
+      381 +            ` : ''}                                           
+      382 +            <a href="${isUserPost ? '#' : 'blog/post.html?id='
+          + + encodeURIComponent(post.id)}" class="blog-card-link" ${isUs
+          +erPost ? 'onclick="return false;"' : ''}>                     
+      383 +                <div class="blog-image" style="background-imag
+          +e: url('${escapeAttr(post.thumbnail || 'https://images.unsplas
+          +h.com/photo-1495474472287-4d71bcdd2085?w=600')}');"></div>    
+      384                  <div class="blog-content">
+      385                      <span class="blog-meta">${escapeHtml(post.
+           date)} &bull; ${escapeHtml(post.author)}</span>
+      386                      <h3>${escapeHtml(post.title)}</h3>
+      372 -                    <p>${escapeHtml(post.excerpt)}</p>        
+      373 -                    <span class="read-more">Read More</span>  
+      387 +                    <p>${escapeHtml(post.excerpt || (post.cont
+          +ent ? post.content.substring(0, 150) + '...' : ''))}</p>      
+      388 +                    ${!isUserPost ? '<span class="read-more">R
+          +ead More</span>' : ''}                                        
+      389                  </div>
+      390              </a>
+      391 +            ${isUserPost ? `                                  
+      392 +                <div class="user-post-content">               
+      393 +                    <p>${escapeHtml(post.content)}</p>        
+      394 +                </div>                                        
+      395 +            ` : ''}                                           
+      396          </article>
+      377 -    `).join('');                                              
+      397 +    `}).join('');                                             
+      398 +                                                              
+      399 +    // Attach report button handlers                          
+      400 +    container.querySelectorAll('.report-btn').forEach(btn => {
+      401 +        btn.addEventListener('click', handleReportClick);     
+      402 +    });                                                       
+      403  }
+      404  
+      405  /**
+      406 + * Handle report button click                                 
+      407 + */                                                           
+      408 +function handleReportClick(event) {                           
+      409 +    event.preventDefault();                                   
+      410 +    event.stopPropagation();                                  
+      411 +                                                              
+      412 +    const postId = event.target.dataset.postId;               
+      413 +    const reason = prompt('Please describe why you are reporti
+          +ng this post:');                                              
+      414 +                                                              
+      415 +    if (reason && reason.trim()) {                            
+      416 +        const result = ReportStore.add(postId, reason.trim());
+      417 +        showToast(result.message, result.success ? 'success' :
+          + 'error');                                                    
+      418 +                                                              
+      419 +        if (result.success) {                                 
+      420 +            // Update the card UI                             
+      421 +            const card = document.querySelector(`.blog-card[da
+          +ta-post-id="${postId}"]`);                                    
+      422 +            if (card) {                                       
+      423 +                card.classList.add('reported');               
+      424 +                const badge = card.querySelector('.user-post-b
+          +adge');                                                       
+      425 +                if (badge) {                                  
+      426 +                    const reportBtn = badge.querySelector('.re
+          +port-btn');                                                   
+      427 +                    if (reportBtn) {                          
+      428 +                        reportBtn.replaceWith(Object.assign(do
+          +cument.createElement('span'), {                               
+      429 +                            className: 'reported-badge',      
+      430 +                            textContent: 'Reported'           
+      431 +                        }));                                  
+      432 +                    }                                         
+      433 +                }                                             
+      434 +            }                                                 
+      435 +        }                                                     
+      436 +    }                                                         
+      437 +}                                                             
+      438 +                                                              
+      439 +/**                                                           
+      440 + * Handle new post form submission                            
+      441 + */                                                           
+      442 +async function handlePostSubmit(event) {                      
+      443 +    event.preventDefault();                                   
+      444 +                                                              
+      445 +    const form = event.target;                                
+      446 +    const submitBtn = form.querySelector('button[type="submit"
+          +]');                                                          
+      447 +    const statusEl = form.querySelector('.post-form-status'); 
+      448 +                                                              
+      449 +    // Get form values                                        
+      450 +    const title = form.querySelector('#post-title').value.trim
+          +();                                                           
+      451 +    const author = form.querySelector('#post-author').value.tr
+          +im();                                                         
+      452 +    const content = form.querySelector('#post-content').value.
+          +trim();                                                       
+      453 +                                                              
+      454 +    // Clear previous errors                                  
+      455 +    form.querySelectorAll('.field-error').forEach(el => el.tex
+          +tContent = '');                                               
+      456 +    form.querySelectorAll('input, textarea').forEach(el => el.
+          +classList.remove('error'));                                   
+      457 +    statusEl.textContent = '';                                
+      458 +    statusEl.className = 'post-form-status';                  
+      459 +                                                              
+      460 +    // Basic validation                                       
+      461 +    let hasErrors = false;                                    
+      462 +                                                              
+      463 +    if (!title || title.length < 5) {                         
+      464 +        form.querySelector('#post-title').classList.add('error
+          +');                                                           
+      465 +        form.querySelector('#title-error').textContent = 'Titl
+          +e must be at least 5 characters';                             
+      466 +        hasErrors = true;                                     
+      467 +    }                                                         
+      468 +                                                              
+      469 +    if (!author || author.length < 2) {                       
+      470 +        form.querySelector('#post-author').classList.add('erro
+          +r');                                                          
+      471 +        form.querySelector('#author-error').textContent = 'Nam
+          +e must be at least 2 characters';                             
+      472 +        hasErrors = true;                                     
+      473 +    }                                                         
+      474 +                                                              
+      475 +    if (!content || content.length < 20) {                    
+      476 +        form.querySelector('#post-content').classList.add('err
+          +or');                                                         
+      477 +        form.querySelector('#content-error').textContent = 'Co
+          +ntent must be at least 20 characters';                        
+      478 +        hasErrors = true;                                     
+      479 +    }                                                         
+      480 +                                                              
+      481 +    if (hasErrors) return;                                    
+      482 +                                                              
+      483 +    // Check for banned content                               
+      484 +    const filterResult = ContentFilter.checkFields({ title, au
+          +thor, content });                                             
+      485 +    if (!filterResult.isClean) {                              
+      486 +        statusEl.textContent = filterResult.reason;           
+      487 +        statusEl.className = 'post-form-status error';        
+      488 +        if (filterResult.field) {                             
+      489 +            form.querySelector(`#post-${filterResult.field}`)?
+          +.classList.add('error');                                      
+      490 +        }                                                     
+      491 +        return;                                               
+      492 +    }                                                         
+      493 +                                                              
+      494 +    // Disable form while submitting                          
+      495 +    submitBtn.disabled = true;                                
+      496 +    submitBtn.textContent = 'Posting...';                     
+      497 +    statusEl.textContent = 'Submitting your post...';         
+      498 +                                                              
+      499 +    // Simulate network delay                                 
+      500 +    await new Promise(resolve => setTimeout(resolve, 500));   
+      501 +                                                              
+      502 +    // Create post object                                     
+      503 +    const post = {                                            
+      504 +        id: 'user-' + Date.now(),                             
+      505 +        title: title,                                         
+      506 +        author: author,                                       
+      507 +        content: content,                                     
+      508 +        date: new Date().toLocaleDateString('en-US', { year: '
+          +numeric', month: 'short', day: 'numeric' }),                  
+      509 +        dateISO: new Date().toISOString(),                    
+      510 +        isUserPost: true,                                     
+      511 +        thumbnail: 'https://images.unsplash.com/photo-14954744
+          +72287-4d71bcdd2085?w=600'                                     
+      512 +    };                                                        
+      513 +                                                              
+      514 +    // Save to storage                                        
+      515 +    const saved = UserPostStore.add(post);                    
+      516 +                                                              
+      517 +    if (saved) {                                              
+      518 +        // Clear form                                         
+      519 +        form.reset();                                         
+      520 +                                                              
+      521 +        // Show success                                       
+      522 +        statusEl.textContent = 'Your post has been published!'
+          +;                                                             
+      523 +        statusEl.className = 'post-form-status success';      
+      524 +                                                              
+      525 +        // Refresh the blog list                              
+      526 +        await refreshBlogList();                              
+      527 +                                                              
+      528 +        // Scroll to see the new post                         
+      529 +        const newCard = document.querySelector(`.blog-card[dat
+          +a-post-id="${post.id}"]`);                                    
+      530 +        if (newCard) {                                        
+      531 +            newCard.scrollIntoView({ behavior: 'smooth', block
+          +: 'center' });                                                
+      532 +            newCard.classList.add('new-post-highlight');      
+      533 +        }                                                     
+      534 +                                                              
+      535 +        showToast('Your post has been published!', 'success');
+      536 +    } else {                                                  
+      537 +        statusEl.textContent = 'Failed to save post. Please tr
+          +y again.';                                                    
+      538 +        statusEl.className = 'post-form-status error';        
+      539 +    }                                                         
+      540 +                                                              
+      541 +    submitBtn.disabled = false;                               
+      542 +    submitBtn.textContent = 'Publish Post';                   
+      543 +}                                                             
+      544 +                                                              
+      545 +/**                                                           
+      546 + * Refresh the blog list (reload posts)                       
+      547 + */                                                           
+      548 +async function refreshBlogList() {                            
+      549 +    const container = document.getElementById('blog-grid');   
+      550 +    if (!container) return;                                   
+      551 +                                                              
+      552 +    try {                                                     
+      553 +        const posts = await BlogAPI.getPosts();               
+      554 +        renderBlogList(posts, container);                     
+      555 +    } catch (error) {                                         
+      556 +        console.error('Error refreshing posts:', error);      
+      557 +    }                                                         
+      558 +}                                                             
+      559 +                                                              
+      560 +/**                                                           
+      561   * Render a single blog post on the detail page
+      562   */
+      563  function renderBlogPost(post, headerContainer, contentContaine
+           r) {
+
+⏺ Now let me update the initBlogList function to set up the post form handler.
+
+⏺ Update(js/blog.js)
+  ⎿  Added 19 lines                                                      
+      1284      };
+      1285  
+      1286      await loadPosts();
+      1287 +                                                             
+      1288 +    // Initialize the create post form                       
+      1289 +    const postForm = document.getElementById('create-post-for
+           +m');                                                         
+      1290 +    if (postForm) {                                          
+      1291 +        postForm.addEventListener('submit', handlePostSubmit)
+           +;                                                            
+      1292 +    }                                                        
+      1293 +                                                             
+      1294 +    // Initialize the form toggle                            
+      1295 +    const toggleBtn = document.getElementById('toggle-post-fo
+           +rm');                                                        
+      1296 +    const formContainer = document.getElementById('create-pos
+           +t-section');                                                 
+      1297 +    if (toggleBtn && formContainer) {                        
+      1298 +        toggleBtn.addEventListener('click', () => {          
+      1299 +            formContainer.classList.toggle('expanded');      
+      1300 +            toggleBtn.textContent = formContainer.classList.c
+           +ontains('expanded')                                          
+      1301 +                ? 'Cancel'                                   
+      1302 +                : 'Write a Post';                            
+      1303 +            toggleBtn.classList.toggle('active');            
+      1304 +        });                                                  
+      1305 +    }                                                        
+      1306  }
+      1307  
+      1308  /**
+
+⏺ Now let me add the create post form to blog.html.
+
+⏺ Update(blog.html)
+  ⎿  Added 44 lines                                                      
+      35          </div>
+      36      </section>
+      37  
+      38 +    <!-- Create Post Section -->                               
+      39 +    <section class="section create-post-wrapper">              
+      40 +        <div class="container">                                
+      41 +            <div class="create-post-header">                   
+      42 +                <div class="create-post-intro">                
+      43 +                    <h3>Share Your Coffee Story</h3>           
+      44 +                    <p>Have a brewing tip, coffee discovery, or
+         + cafe recommendation? Share it with our community.</p>         
+      45 +                </div>                                         
+      46 +                <button class="btn btn-primary" id="toggle-post
+         +-form">Write a Post</button>                                   
+      47 +            </div>                                             
+      48 +                                                               
+      49 +            <div class="create-post-section" id="create-post-se
+         +ction">                                                        
+      50 +                <form class="create-post-form" id="create-post-
+         +form">                                                         
+      51 +                    <div class="form-field">                   
+      52 +                        <label for="post-title">Title</label>  
+      53 +                        <input type="text" id="post-title" name
+         +="title" placeholder="Give your post a title" maxlength="100" r
+         +equired>                                                       
+      54 +                        <span class="field-error" id="title-err
+         +or"></span>                                                    
+      55 +                    </div>                                     
+      56 +                                                               
+      57 +                    <div class="form-field">                   
+      58 +                        <label for="post-author">Your Name</lab
+         +el>                                                            
+      59 +                        <input type="text" id="post-author" nam
+         +e="author" placeholder="How should we credit you?" maxlength="5
+         +0" required>                                                   
+      60 +                        <span class="field-error" id="author-er
+         +ror"></span>                                                   
+      61 +                    </div>                                     
+      62 +                                                               
+      63 +                    <div class="form-field">                   
+      64 +                        <label for="post-content">Your Post</la
+         +bel>                                                           
+      65 +                        <textarea id="post-content" name="conte
+         +nt" placeholder="Share your thoughts, tips, or stories about co
+         +ffee..." maxlength="2000" required></textarea>                 
+      66 +                        <span class="field-error" id="content-e
+         +rror"></span>                                                  
+      67 +                    </div>                                     
+      68 +                                                               
+      69 +                    <div class="form-note">                    
+      70 +                        <p>Please keep posts respectful and on-
+         +topic. Posts with inappropriate content will be removed.</p>   
+      71 +                    </div>                                     
+      72 +                                                               
+      73 +                    <div class="create-post-actions">          
+      74 +                        <button type="submit" class="btn btn-pr
+         +imary">Publish Post</button>                                   
+      75 +                        <span class="post-form-status"></span> 
+      76 +                    </div>                                     
+      77 +                </form>                                        
+      78 +            </div>                                             
+      79 +        </div>                                                 
+      80 +    </section>                                                 
+      81 +                                                               
+      82      <!-- Blog Posts -->
+      83      <section class="section">
+      84          <div class="container">
+
+⏺ Now let me add the CSS styles for the new components.
+
+⏺ Update(css/styles.css)
+  ⎿  Added 264 lines                                                     
+      2228          justify-content: center;
+      2229      }
+      2230  }
+      2231 +                                                             
+      2232 +/* ========================================                  
+      2233 +   Create Post Section                                       
+      2234 +   ======================================== */               
+      2235 +.create-post-wrapper {                                       
+      2236 +    padding-top: 40px;                                       
+      2237 +    padding-bottom: 40px;                                    
+      2238 +    background-color: var(--cream-dark);                     
+      2239 +    border-bottom: 1px solid var(--warm-tan);                
+      2240 +}                                                            
+      2241 +                                                             
+      2242 +.create-post-header {                                        
+      2243 +    display: flex;                                           
+      2244 +    align-items: center;                                     
+      2245 +    justify-content: space-between;                          
+      2246 +    gap: 30px;                                               
+      2247 +    flex-wrap: wrap;                                         
+      2248 +}                                                            
+      2249 +                                                             
+      2250 +.create-post-intro h3 {                                      
+      2251 +    font-size: 1.25rem;                                      
+      2252 +    margin-bottom: 8px;                                      
+      2253 +}                                                            
+      2254 +                                                             
+      2255 +.create-post-intro p {                                       
+      2256 +    color: var(--coffee-brown);                              
+      2257 +    font-size: 0.95rem;                                      
+      2258 +    margin: 0;                                               
+      2259 +}                                                            
+      2260 +                                                             
+      2261 +#toggle-post-form {                                          
+      2262 +    white-space: nowrap;                                     
+      2263 +}                                                            
+      2264 +                                                             
+      2265 +#toggle-post-form.active {                                   
+      2266 +    background-color: transparent;                           
+      2267 +    color: var(--coffee-brown);                              
+      2268 +    border-color: var(--coffee-brown);                       
+      2269 +}                                                            
+      2270 +                                                             
+      2271 +.create-post-section {                                       
+      2272 +    max-height: 0;                                           
+      2273 +    overflow: hidden;                                        
+      2274 +    transition: max-height 0.4s ease, margin-top 0.4s ease, o
+           +pacity 0.3s ease;                                            
+      2275 +    opacity: 0;                                              
+      2276 +}                                                            
+      2277 +                                                             
+      2278 +.create-post-section.expanded {                              
+      2279 +    max-height: 800px;                                       
+      2280 +    margin-top: 40px;                                        
+      2281 +    opacity: 1;                                              
+      2282 +}                                                            
+      2283 +                                                             
+      2284 +.create-post-form {                                          
+      2285 +    background-color: var(--white);                          
+      2286 +    padding: 35px;                                           
+      2287 +    border: 1px solid var(--warm-tan);                       
+      2288 +}                                                            
+      2289 +                                                             
+      2290 +.create-post-form .form-field {                              
+      2291 +    margin-bottom: 20px;                                     
+      2292 +}                                                            
+      2293 +                                                             
+      2294 +.create-post-form .form-field label {                        
+      2295 +    display: block;                                          
+      2296 +    font-family: var(--font-body);                           
+      2297 +    font-size: 0.75rem;                                      
+      2298 +    text-transform: uppercase;                               
+      2299 +    letter-spacing: 0.1em;                                   
+      2300 +    margin-bottom: 8px;                                      
+      2301 +    color: var(--coffee-dark);                               
+      2302 +}                                                            
+      2303 +                                                             
+      2304 +.create-post-form .form-field input,                         
+      2305 +.create-post-form .form-field textarea {                     
+      2306 +    width: 100%;                                             
+      2307 +    padding: 14px 16px;                                      
+      2308 +    font-family: var(--font-body);                           
+      2309 +    font-size: 0.95rem;                                      
+      2310 +    border: 1px solid var(--warm-tan);                       
+      2311 +    background-color: var(--cream);                          
+      2312 +    transition: var(--transition);                           
+      2313 +}                                                            
+      2314 +                                                             
+      2315 +.create-post-form .form-field input:focus,                   
+      2316 +.create-post-form .form-field textarea:focus {               
+      2317 +    outline: none;                                           
+      2318 +    border-color: var(--sage-green);                         
+      2319 +    background-color: var(--white);                          
+      2320 +}                                                            
+      2321 +                                                             
+      2322 +.create-post-form .form-field input.error,                   
+      2323 +.create-post-form .form-field textarea.error {               
+      2324 +    border-color: #c0392b;                                   
+      2325 +}                                                            
+      2326 +                                                             
+      2327 +.create-post-form .form-field textarea {                     
+      2328 +    min-height: 180px;                                       
+      2329 +    resize: vertical;                                        
+      2330 +}                                                            
+      2331 +                                                             
+      2332 +.create-post-form .field-error {                             
+      2333 +    font-size: 0.8rem;                                       
+      2334 +    color: #c0392b;                                          
+      2335 +    margin-top: 5px;                                         
+      2336 +    display: block;                                          
+      2337 +    min-height: 1.2em;                                       
+      2338 +}                                                            
+      2339 +                                                             
+      2340 +.form-note {                                                 
+      2341 +    margin-bottom: 20px;                                     
+      2342 +    padding: 15px;                                           
+      2343 +    background-color: var(--cream);                          
+      2344 +    border-left: 3px solid var(--sage-green);                
+      2345 +}                                                            
+      2346 +                                                             
+      2347 +.form-note p {                                               
+      2348 +    font-size: 0.85rem;                                      
+      2349 +    color: var(--coffee-brown);                              
+      2350 +    margin: 0;                                               
+      2351 +    font-style: italic;                                      
+      2352 +}                                                            
+      2353 +                                                             
+      2354 +.create-post-actions {                                       
+      2355 +    display: flex;                                           
+      2356 +    align-items: center;                                     
+      2357 +    gap: 15px;                                               
+      2358 +    flex-wrap: wrap;                                         
+      2359 +}                                                            
+      2360 +                                                             
+      2361 +.create-post-actions .btn:disabled {                         
+      2362 +    opacity: 0.6;                                            
+      2363 +    cursor: not-allowed;                                     
+      2364 +}                                                            
+      2365 +                                                             
+      2366 +.post-form-status {                                          
+      2367 +    font-size: 0.85rem;                                      
+      2368 +    color: var(--coffee-brown);                              
+      2369 +}                                                            
+      2370 +                                                             
+      2371 +.post-form-status.error {                                    
+      2372 +    color: #c0392b;                                          
+      2373 +}                                                            
+      2374 +                                                             
+      2375 +.post-form-status.success {                                  
+      2376 +    color: var(--sage-dark);                                 
+      2377 +}                                                            
+      2378 +                                                             
+      2379 +/* ========================================                  
+      2380 +   User Post Cards                                           
+      2381 +   ======================================== */               
+      2382 +.blog-card.user-post {                                       
+      2383 +    position: relative;                                      
+      2384 +}                                                            
+      2385 +                                                             
+      2386 +.user-post-badge {                                           
+      2387 +    display: flex;                                           
+      2388 +    align-items: center;                                     
+      2389 +    justify-content: space-between;                          
+      2390 +    padding: 10px 15px;                                      
+      2391 +    background-color: var(--sage-green);                     
+      2392 +    color: var(--white);                                     
+      2393 +    font-family: var(--font-body);                           
+      2394 +    font-size: 0.7rem;                                       
+      2395 +    text-transform: uppercase;                               
+      2396 +    letter-spacing: 0.1em;                                   
+      2397 +}                                                            
+      2398 +                                                             
+      2399 +.report-btn {                                                
+      2400 +    background: transparent;                                 
+      2401 +    border: 1px solid rgba(255,255,255,0.5);                 
+      2402 +    color: var(--white);                                     
+      2403 +    padding: 4px 12px;                                       
+      2404 +    font-family: var(--font-body);                           
+      2405 +    font-size: 0.65rem;                                      
+      2406 +    text-transform: uppercase;                               
+      2407 +    letter-spacing: 0.1em;                                   
+      2408 +    cursor: pointer;                                         
+      2409 +    transition: var(--transition);                           
+      2410 +}                                                            
+      2411 +                                                             
+      2412 +.report-btn:hover {                                          
+      2413 +    background: rgba(255,255,255,0.2);                       
+      2414 +    border-color: var(--white);                              
+      2415 +}                                                            
+      2416 +                                                             
+      2417 +.reported-badge {                                            
+      2418 +    background: rgba(255,255,255,0.2);                       
+      2419 +    padding: 4px 12px;                                       
+      2420 +    font-size: 0.65rem;                                      
+      2421 +}                                                            
+      2422 +                                                             
+      2423 +.blog-card.reported {                                        
+      2424 +    opacity: 0.7;                                            
+      2425 +}                                                            
+      2426 +                                                             
+      2427 +.blog-card.reported .blog-image {                            
+      2428 +    filter: grayscale(50%);                                  
+      2429 +}                                                            
+      2430 +                                                             
+      2431 +.user-post-content {                                         
+      2432 +    padding: 0 35px 25px;                                    
+      2433 +    background-color: var(--white);                          
+      2434 +}                                                            
+      2435 +                                                             
+      2436 +.user-post-content p {                                       
+      2437 +    font-size: 0.95rem;                                      
+      2438 +    color: var(--coffee-brown);                              
+      2439 +    line-height: 1.8;                                        
+      2440 +    margin: 0;                                               
+      2441 +    white-space: pre-wrap;                                   
+      2442 +}                                                            
+      2443 +                                                             
+      2444 +.blog-card.user-post .blog-content {                         
+      2445 +    padding-bottom: 15px;                                    
+      2446 +}                                                            
+      2447 +                                                             
+      2448 +.blog-card.user-post .blog-image {                           
+      2449 +    height: 180px;                                           
+      2450 +}                                                            
+      2451 +                                                             
+      2452 +/* New post highlight animation */                           
+      2453 +.blog-card.new-post-highlight {                              
+      2454 +    animation: highlightNewPost 2s ease;                     
+      2455 +}                                                            
+      2456 +                                                             
+      2457 +@keyframes highlightNewPost {                                
+      2458 +    0% {                                                     
+      2459 +        box-shadow: 0 0 0 4px var(--sage-green);             
+      2460 +    }                                                        
+      2461 +    100% {                                                   
+      2462 +        box-shadow: none;                                    
+      2463 +    }                                                        
+      2464 +}                                                            
+      2465 +                                                             
+      2466 +@media (max-width: 576px) {                                  
+      2467 +    .create-post-header {                                    
+      2468 +        flex-direction: column;                              
+      2469 +        align-items: flex-start;                             
+      2470 +        text-align: center;                                  
+      2471 +    }                                                        
+      2472 +                                                             
+      2473 +    .create-post-intro {                                     
+      2474 +        text-align: center;                                  
+      2475 +        width: 100%;                                         
+      2476 +    }                                                        
+      2477 +                                                             
+      2478 +    #toggle-post-form {                                      
+      2479 +        width: 100%;                                         
+      2480 +    }                                                        
+      2481 +                                                             
+      2482 +    .create-post-form {                                      
+      2483 +        padding: 25px 20px;                                  
+      2484 +    }                                                        
+      2485 +                                                             
+      2486 +    .create-post-actions {                                   
+      2487 +        flex-direction: column;                              
+      2488 +        align-items: stretch;                                
+      2489 +    }                                                        
+      2490 +                                                             
+      2491 +    .create-post-actions .btn {                              
+      2492 +        width: 100%;                                         
+      2493 +    }                                                        
+      2494 +}                                                            
+
+⏺ I've implemented the user blog posting feature with content moderation. Here's what was added:
+
+  Summary of Changes
+
+  1. Banned Words Filter (js/blog.js:15-60)
+
+  - Regex-based ContentFilter module that checks for inappropriate language
+  - Blocks submission if banned words are detected
+  - Configurable patterns - you can add more words to the bannedPatterns array
+  - Checks title, author name, and content fields
+
+  2. User Post Storage (js/blog.js:62-108)
+
+  - UserPostStore saves user posts to localStorage
+  - Posts persist across browser sessions
+  - Each post gets a unique ID and timestamp
+
+  3. Report System (js/blog.js:110-145)
+
+  - ReportStore tracks reported posts
+  - Users can report inappropriate content via a "Report" button
+  - Reported posts are visually dimmed and marked
+  - Reports stored in localStorage for admin review
+
+  4. Create Post Form (blog.html:38-76)
+
+  - Collapsible form section on the blog page
+  - Fields: Title, Author Name, Post Content
+  - Validation for minimum lengths
+  - Content filter check before submission
+
+  5. Visual Features
+
+  - User posts marked with "Community Post" badge
+  - Report button on each user post
+  - New post highlight animation
+  - Responsive design for mobile
+
+  How to Customize the Banned Words
+
+  Edit js/blog.js and find the bannedPatterns array (around line 23). Add your own patterns:
+
+  bannedPatterns: [
+      /\byour-word-here\b/i,
+      /\banother-pattern\b/i,
+      // ... add more
+  ]
+
+  The \b creates word boundaries and /i makes it case-insensitive.
+
+  Admin Access to Reports
+
+  Reports are stored in localStorage under the key blog_reports. You could view them by opening browser dev tools and running:
+  JSON.parse(localStorage.getItem('blog_reports'))
+
+  For a production site, you'd want to send reports to a backend server instead.
+
+✻ Baked for 3m 26s
+
+❯ there is one is an issue with mobile responsiveness on the blog page. due 
+  to the layout change, the blog post boxes get cut off in mobile view.     
+
+⏺ Let me check the blog card styles and identify the issue.
+
+⏺ Read(css/styles.css)
+  ⎿  Read 100 lines
+
+⏺ Search(pattern: "blog-grid|blog-card|user-post", path: "css/styles.css",
+        output_mode: "content")
+  ⎿  Found 17 lines (ctrl+o to expand)
+
+⏺ Read(css/styles.css)
+  ⎿  Read 30 lines
+
+⏺ I see the issue. The max-width: 550px constraint on the blog grid at tablet size, combined with the user post content padding, can cause overflow. Let me fix this by adjusting the responsive styles for user posts and ensuring proper overflow handling.
+
+⏺ Update(css/styles.css)
+  ⎿  Added 6 lines, removed 1 line                                       
+      1266  
+      1267      .blog-grid {
+      1268          grid-template-columns: 1fr;
+      1269 -        max-width: 550px;                                    
+      1269 +        max-width: 100%;                                     
+      1270          margin: 0 auto;
+      1271      }
+      1272  
+      1273 +    .blog-card {                                             
+      1274 +        max-width: 100%;                                     
+      1275 +        overflow: hidden;                                    
+      1276 +    }                                                        
+      1277 +                                                             
+      1278      .hours-wrapper {
+      1279          gap: 40px;
+      1280      }
+
+⏺ Now let me also fix the user post content styles for mobile to prevent overflow.
+
+⏺ Update(css/styles.css)
+  ⎿  Added 3 lines                                                       
+      2436  .user-post-content {
+      2437      padding: 0 35px 25px;
+      2438      background-color: var(--white);
+      2439 +    overflow: hidden;                                        
+      2440  }
+      2441  
+      2442  .user-post-content p {
+     ...
+      2445      line-height: 1.8;
+      2446      margin: 0;
+      2447      white-space: pre-wrap;
+      2448 +    word-wrap: break-word;                                   
+      2449 +    overflow-wrap: break-word;                               
+      2450  }
+      2451  
+      2452  .blog-card.user-post .blog-content {
+
+⏺ Now let me add mobile-specific adjustments for the user post cards.
+
+⏺ Update(css/styles.css)
+  ⎿  Added 44 lines                                                      
+      2471      }
+      2472  }
+      2473  
+      2474 +@media (max-width: 768px) {                                  
+      2475 +    .blog-card .blog-content {                               
+      2476 +        padding: 25px 20px;                                  
+      2477 +    }                                                        
+      2478 +                                                             
+      2479 +    .blog-card .blog-image {                                 
+      2480 +        height: 200px;                                       
+      2481 +    }                                                        
+      2482 +                                                             
+      2483 +    .blog-card.user-post .blog-image {                       
+      2484 +        height: 150px;                                       
+      2485 +    }                                                        
+      2486 +                                                             
+      2487 +    .user-post-content {                                     
+      2488 +        padding: 0 20px 20px;                                
+      2489 +    }                                                        
+      2490 +                                                             
+      2491 +    .user-post-badge {                                       
+      2492 +        padding: 8px 12px;                                   
+      2493 +        flex-wrap: wrap;                                     
+      2494 +        gap: 8px;                                            
+      2495 +    }                                                        
+      2496 +}                                                            
+      2497 +                                                             
+      2498  @media (max-width: 576px) {
+      2499      .create-post-header {
+      2500          flex-direction: column;
+     ...
+      2523      .create-post-actions .btn {
+      2524          width: 100%;
+      2525      }
+      2526 +                                                             
+      2527 +    .blog-card .blog-content {                               
+      2528 +        padding: 20px 15px;                                  
+      2529 +    }                                                        
+      2530 +                                                             
+      2531 +    .blog-card h3 {                                          
+      2532 +        font-size: 1.1rem;                                   
+      2533 +    }                                                        
+      2534 +                                                             
+      2535 +    .blog-card p {                                           
+      2536 +        font-size: 0.9rem;                                   
+      2537 +    }                                                        
+      2538 +                                                             
+      2539 +    .user-post-content {                                     
+      2540 +        padding: 0 15px 15px;                                
+      2541 +    }                                                        
+      2542 +                                                             
+      2543 +    .user-post-content p {                                   
+      2544 +        font-size: 0.9rem;                                   
+      2545 +    }                                                        
+      2546  }
+
+⏺ Let me also ensure the blog card has proper box-sizing to prevent overflow issues.
+
+⏺ Update(css/styles.css)
+  ⎿  Added 3 lines                                                       
+      935      background-color: var(--white);
+      936      border: 1px solid var(--warm-tan);
+      937      transition: var(--transition);
+      938 +    max-width: 100%;                                          
+      939 +    overflow: hidden;                                         
+      940 +    box-sizing: border-box;                                   
+      941  }
+      942  
+      943  .blog-card:hover {
+
+⏺ Let me remove the duplicate rule I added in the tablet media query since those properties are now in the base style.
+
+⏺ Update(css/styles.css)
+  ⎿  Removed 5 lines                                                     
+      1273          margin: 0 auto;
+      1274      }
+      1275  
+      1276 -    .blog-card {                                             
+      1277 -        max-width: 100%;                                     
+      1278 -        overflow: hidden;                                    
+      1279 -    }                                                        
+      1280 -                                                             
+      1276      .hours-wrapper {
+      1277          gap: 40px;
+      1278      }
+
+⏺ I've fixed the mobile responsiveness issues. Here's what was changed:
+
+  Fixes applied:
+
+  1. Removed the 550px max-width constraint on the blog grid at tablet size - this was limiting the cards unnecessarily
+  2. Added overflow handling to .blog-card:
+    - overflow: hidden prevents content from spilling out
+    - box-sizing: border-box ensures padding is included in width calculations
+  3. Fixed text overflow in user post content:
+    - Added word-wrap: break-word and overflow-wrap: break-word to handle long text
+  4. Added responsive padding at 768px and 576px breakpoints:
+    - Reduced .blog-content padding from 35px to 25px/20px on tablet, 20px/15px on mobile
+    - Reduced .user-post-content padding similarly
+    - Reduced image heights on smaller screens
+
+  The blog cards should now display properly on mobile without getting cut off.
+
+✻ Brewed for 54s
+
+❯ include a professional readme and provide content to show off the tech    
+  stack and programming processes involved and how AI helped                
+
+⏺ Search(pattern: "**/*.md")
+  ⎿  Found 2 files (ctrl+o to expand)
+
+⏺ Read(docs/PROCESS.md)
+  ⎿  Read 13 lines
+
+⏺ Read(docs/BUILD-PLAN.md)
+  ⎿  Read 19 lines
+
+⏺ Now I have good context from your existing documentation. Let me create a professional README that showcases the project.
+
+⏺ Write(README.md)
+  ⎿  Wrote 352 lines to README.md                                        
+      1 # Alchemy Brew - Coffee Shop Website
+      2 A modern, fully-functional coffee shop website featuring an inter
+        active blog system with community engagement features. Built with
+         vanilla HTML, CSS, and JavaScript, demonstrating that powerful w
+        eb applications don't always require heavy frameworks.
+      3 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat&log
+        o=html5&logoColor=white)
+      4 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=
+        css3&logoColor=white)
+      5 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?styl
+        e=flat&logo=javascript&logoColor=black)
+      6 ![Claude AI](https://img.shields.io/badge/AI%20Assisted-Claude-bl
+        ueviolet)
+      7 ---
+     … +342 lines (ctrl+o to expand)
+
+⏺ I've created a professional README at /README.md. Here's what it includes:
+
+  README Highlights
+
+  Project Overview
+  - Description of the Alchemy Brew website and its features
+  - Badges for tech stack (HTML5, CSS3, JavaScript, Claude AI)
+
+  Tech Stack Tables
+  - Frontend technologies with their purposes
+  - Design system details (fonts, colors, responsive breakpoints)
+  - Data management approach (JSON files + localStorage)
+
+  Project Structure
+  - Complete file tree showing organization
+  - Line counts for major files
+
+  AI-Assisted Development Section
+  - How Claude was used (planning, code generation, debugging)
+  - Visual workflow diagram showing the human-AI collaboration cycle
+  - Key learnings from working with AI
+
+  Development Process
+  - 4-phase breakdown with status checkboxes
+  - Shows the incremental build approach from your PROCESS.md
+
+  Technical Implementations
+  - Code snippets showing:
+    - Optimistic UI pattern
+    - Content filtering system
+    - localStorage architecture
+    - Responsive design strategy
+
+  Additional Sections
+  - Getting started instructions
+  - Browser support table
+  - Future enhancements roadmap
+  - Acknowledgments
+
+  The README is formatted with GitHub-flavored markdown and will render nicely on your repository page with tables, code blocks, and the ASCII diagram.
+
+✻ Sautéed for 1m 8s
+
+
+
